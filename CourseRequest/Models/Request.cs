@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 
 namespace CourseRequest.Models
 {
@@ -15,5 +15,6 @@ namespace CourseRequest.Models
         public DateTime CourseBeginning { get; set; }
         public DateTime CourseEnd { get; set; }
         public int Year { get; set; }
+        public string Username { get; set; }
     }
 }

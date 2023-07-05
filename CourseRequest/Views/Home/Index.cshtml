@@ -8,95 +8,94 @@
     string userName = currentIdentity?.Name ?? "Неизвестно";
 }
 
-
-<div class="container-fluid">
-    <div class="row mt-3">
-        <div class="col">
-            <div>
-                <b>Новая заявка</b>
-            </div>
-            <div>
-                <span class="user">Пользователь: @userName</span>
-            </div>
-        </div>
-        <div class="col-auto text-center">
-            <a class="btn btn-primary" asp-area="" asp-controller="Request" asp-action="RequestList">Перейти к списку</a>
-        </div>
-    </div>
-
-    <hr />
-
-    <div class="row mb-4 mt-2">
-        <div class="col-md-4">
-            <label for="inputField">ФИО</label>
-            <input type="text" class="form-control" id="inputField" placeholder="Введите значение">
-        </div>
-        <div class="col-md-4">
-            <label for="inputField">Наименование курса</label>
-            <textarea class="form-control" id="textareaField" rows="1" placeholder="Введите текст"></textarea>
-        </div>
-        <div class="col-md-4">
-            <label for="inputField">Статус</label>
-            <select class="form-control" id="selectField">
-                <option value="1">Заявлен на обучение</option>
-                <option value="2">Курс пройден</option>
-            </select>
-        </div>
-    </div>
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <label for="inputField">Отдел</label>
-            <input type="text" class="form-control" id="inputField" placeholder="Введите значение">
-        </div>
-        <div class="col-md-4">
-            <label for="selectField">Тип курса</label>
-            <select class="form-control" id="selectField">
-                <option value="1">Базовый</option>
-                <option value="2">Продвинутый</option>
-                <option value="3">Для администраторов</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label for="eventDate">Период проведения курса</label>
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="text" class="form-control" id="startDate" placeholder="от" />
+<form method="post" action="/Request/CreateRequest">
+    <div class="container-fluid">
+        <div class="row mt-3">
+            <div class="col">
+                <div>
+                    <b>Новая заявка</b>
                 </div>
-                <div class="col-md-6">
-                    <input type="text" class="form-control" id="endDate" placeholder="до">
+                <div>
+                    <span class="user">Пользователь: @userName</span>
+                    <input type="hidden" id="User" name="Username" value="@userName">
                 </div>
             </div>
+            <div class="col-auto text-center">
+                <a class="btn btn-primary" asp-area="" asp-controller="Request" asp-action="RequestList">Перейти к списку</a>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="row mb-4 mt-2">
+            <div class="col-md-4">
+                <label for="FullName">ФИО</label>
+                <input type="text" class="form-control" id="FullName" name="FullName" placeholder="Введите значение">
+            </div>
+            <div class="col-md-4">
+                <label for="CourseName">Наименование курса</label>
+                <textarea class="form-control" id="CourseName" name="CourseName" rows="1" placeholder="Введите текст"></textarea>
+            </div>
+            <div class="col-md-4">
+                <label for="Status">Статус</label>
+                <select class="form-control" id="Status" name="Status">
+                    <option value="1">Заявлен на обучение</option>
+                    <option value="2">Курс пройден</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="Department">Отдел</label>
+                <input type="text" class="form-control" id="Department" name="Department" placeholder="Введите значение">
+            </div>
+            <div class="col-md-4">
+                <label for="CourseType">Тип курса</label>
+                <select class="form-control" id="CourseType" name="CourseType">
+                    <option value="1">Базовый</option>
+                    <option value="2">Продвинутый</option>
+                    <option value="3">Для администраторов</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="CourseBeginning">Период проведения курса</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="CourseBeginning" name="CourseBeginning" placeholder="от" />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="CourseEnd" name="CourseEnd" placeholder="до">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <label for="Position">Должность</label>
+                <input type="text" class="form-control" id="Position" name="Position" placeholder="Введите значение">
+            </div>
+            <div class="col-md-4">
+                <label for="Notation">Примечание</label>
+                <textarea class="form-control" id="Notation" name="Notation" rows="1" placeholder="Введите текст"></textarea>
+            </div>
+            <div class="col-md-4">
+                <label for="Year">Год</label>
+                <input type="text" class="form-control" id="Year" name="Year" placeholder="Введите значение">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <span class="countApp">Количество заявок: </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                
+                <button type="submit" class="btn btn-primary btn-custom-outline-orange text-white">Создать заявку</button>
+
+
+            </div>
         </div>
     </div>
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <label for="inputField">Должность</label>
-            <input type="text" class="form-control" id="inputField" placeholder="Введите значение">
-        </div>
-        <div class="col-md-4">
-            <label for="inputField">Примечание</label>
-            <textarea class="form-control" id="textareaField" rows="1" placeholder="Введите текст"></textarea>
-        </div>
-        <div class="col-md-4">
-            <label for="inputField">Год</label>
-            <input type="text" class="form-control" id="curYear" placeholder="Введите значение">
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-auto">
-            <span class="countApp">Количество заявок: </span>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col text-center">
-            <a class="btn btn-primary btn-custom-outline-orange text-white">Создать заявку</a>
-        </div>
-    </div>
-</div>
 
-
-
-
-
-
-
+</form>
