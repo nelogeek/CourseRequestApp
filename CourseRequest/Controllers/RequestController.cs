@@ -6,6 +6,7 @@ using System;
 using CourseRequest.Models;
 using System.Data.SqlClient;
 using System.Security.Principal;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CourseRequest.Controllers
 {
@@ -47,7 +48,7 @@ namespace CourseRequest.Controllers
             return requestCount;
         }
 
-
+       
         private List<RequestOut> GetRequestsFromDB()
         {
             List<RequestOut> requests = new List<RequestOut>();
