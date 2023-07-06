@@ -5,30 +5,52 @@ using System.Data;
 using System;
 using CourseRequest.Models;
 using System.Data.SqlClient;
-
+using System.Security.Principal;
 
 namespace CourseRequest.Controllers
 {
     public class RequestController : Controller
     {
-
-        public IActionResult RequestList()
-        {
-            List<Request> requests = GetRequestsFromDB();
-            return View("~/Views/Home/RequestList.cshtml", requests);
-        }
-
         private readonly IConfiguration _configuration;
 
         public RequestController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-
-
-        private List<Request> GetRequestsFromDB()
+        public IActionResult RequestList()
         {
-            List<Request> requests = new List<Request>();
+            List<RequestOut> requests = GetRequestsFromDB();
+            return View("~/Views/Home/RequestList.cshtml", requests);
+        }
+
+        private string GetCurrentUser()
+        {
+            WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
+            string userName = currentIdentity?.Name ?? "Неизвестно";
+            return userName;
+        }
+
+        private int GetRequestCountByUser(string userName)
+        {
+            string connectionString = _configuration.GetConnectionString("connectionString");
+            int requestCount = 0;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Requests WHERE [user] = @UserName";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@UserName", userName);
+                requestCount = (int)command.ExecuteScalar();
+            }
+
+            return requestCount;
+        }
+
+
+        private List<RequestOut> GetRequestsFromDB()
+        {
+            List<RequestOut> requests = new List<RequestOut>();
 
             string connectionString = _configuration.GetConnectionString("connectionString");
 
@@ -41,23 +63,21 @@ namespace CourseRequest.Controllers
 
                 while (reader.Read())
                 {
-                    Request request = new Request
+                    RequestOut request = new RequestOut
                     {
-                        Id = reader.GetInt32(reader.GetOrdinal("id")),
-                        FullName = reader.GetString(reader.GetOrdinal("full_name")),
-                        Department = reader.GetString(reader.GetOrdinal("department")),
-                        Position = reader.GetString(reader.GetOrdinal("position")),
-                        CourseName = reader.GetString(reader.GetOrdinal("course_name")),
-                        CourseType = reader.GetString(reader.GetOrdinal("course_type")),
-                        Notation = reader.GetString(reader.GetOrdinal("notation")),
-                        Status = reader.GetString(reader.GetOrdinal("status")),
-                        CourseBeginning = reader.GetDateTime(reader.GetOrdinal("course_beginning")),
-                        CourseEnd = reader.GetDateTime(reader.GetOrdinal("course_end")),
-                        Year = reader.GetInt32(reader.GetOrdinal("year")),
-                        Username = reader.GetString(reader.GetOrdinal("user"))
+                        Id = (int)reader["id"],
+                        FullName = (string)reader["full_name"],
+                        Department = (string)reader["department"],
+                        Position = (string)reader["position"],
+                        CourseName = (string)reader["course_name"],
+                        CourseType = GetCourseTypeName( (int)reader["course_type"]), 
+                        Notation = (string)reader["notation"],
+                        Status = GetStatusName( (int)reader["status"]),
+                        CourseStart = (DateTime)reader["course_start"],
+                        CourseEnd = (DateTime)reader["course_end"],
+                        Year = (int)reader["year"],
+                        Username = (string)reader["user"]
                     };
-
-
 
                     requests.Add(request);
                 }
@@ -68,31 +88,58 @@ namespace CourseRequest.Controllers
             return requests;
         }
 
+        private string GetCourseTypeName(int typeId)
+        {
+            string connectionString = _configuration.GetConnectionString("connectionString");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT type FROM Type WHERE id = @TypeId";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@TypeId", typeId);
+                string typeName = (string)command.ExecuteScalar();
+                return typeName;
+            }
+        }
+
+        private string GetStatusName(int statusId)
+        {
+            string connectionString = _configuration.GetConnectionString("connectionString");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT status FROM Status WHERE id = @StatusId";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@StatusId", statusId);
+                string statusName = (string)command.ExecuteScalar();
+                return statusName;
+            }
+        }
+
+
         [HttpPost]
         public IActionResult CreateRequest(Request request)
         {
             if (ModelState.IsValid)
             {
-                // Добавить код для сохранения данных в базу данных
-                // Используйте объект request для доступа к значениям полей формы
-
-                // Пример кода для сохранения данных в базу данных с использованием System.Data.SqlClient:
                 string connectionString = _configuration.GetConnectionString("connectionString");
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    string query = "INSERT INTO Requests (full_name, department, position, course_name, course_type, notation, status, course_beginning, course_end, year, [user]) " +
-                                   "VALUES (@FullName, @Department, @Position, @CourseName, @CourseType, @Notation, @Status, @CourseBeginning, @CourseEnd, @Year, @User)";
+                    string query = "INSERT INTO Requests (full_name, department, position, course_name, course_type, notation, status, course_start, course_end, year, [user]) " +
+                                   "VALUES (@FullName, @Department, @Position, @CourseName, @CourseTypeId, @Notation, @StatusId, @CourseStart, @CourseEnd, @Year, @User)";
 
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@FullName", request.FullName);
                     command.Parameters.AddWithValue("@Department", request.Department);
                     command.Parameters.AddWithValue("@Position", request.Position);
                     command.Parameters.AddWithValue("@CourseName", request.CourseName);
-                    command.Parameters.AddWithValue("@CourseType", request.CourseType);
+                    command.Parameters.AddWithValue("@CourseTypeId", request.CourseTypeId); // Используем новое свойство CourseTypeId
                     command.Parameters.AddWithValue("@Notation", request.Notation);
-                    command.Parameters.AddWithValue("@Status", request.Status);
-                    command.Parameters.AddWithValue("@CourseBeginning", request.CourseBeginning);
-                    command.Parameters.AddWithValue("@CourseEnd", request.CourseEnd);
+                    command.Parameters.AddWithValue("@StatusId", request.StatusId); // Используем новое свойство StatusId
+                    command.Parameters.AddWithValue("@CourseStart", request.CourseStart.ToString("yyyy-MM-dd"));
+                    command.Parameters.AddWithValue("@CourseEnd", request.CourseEnd.ToString("yyyy-MM-dd"));
                     command.Parameters.AddWithValue("@Year", request.Year);
                     command.Parameters.AddWithValue("@User", request.Username);
 
@@ -119,6 +166,9 @@ namespace CourseRequest.Controllers
                 return View("Error");
             }
         }
+
+
+
 
 
 

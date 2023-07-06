@@ -17,7 +17,7 @@
                 </div>
                 <div>
                     <span class="user">Пользователь: @userName</span>
-                    <input type="hidden" id="User" name="Username" value="@userName">
+                    
                 </div>
             </div>
             <div class="col-auto text-center">
@@ -38,7 +38,7 @@
             </div>
             <div class="col-md-4">
                 <label for="Status">Статус</label>
-                <select class="form-control" id="Status" name="Status">
+                <select class="form-control" id="StatusId" name="StatusId">
                     <option value="1">Заявлен на обучение</option>
                     <option value="2">Курс пройден</option>
                 </select>
@@ -51,7 +51,7 @@
             </div>
             <div class="col-md-4">
                 <label for="CourseType">Тип курса</label>
-                <select class="form-control" id="CourseType" name="CourseType">
+                <select class="form-control" id="CourseTypeId" name="CourseTypeId">
                     <option value="1">Базовый</option>
                     <option value="2">Продвинутый</option>
                     <option value="3">Для администраторов</option>
@@ -85,17 +85,18 @@
         </div>
         <div class="row">
             <div class="col-auto">
-                <span class="countApp">Количество заявок: </span>
+                <span class="countApp">Количество заявок: @ViewData["RequestCount"]</span>
             </div>
         </div>
         <div class="row">
             <div class="col text-center">
-                
+                <input type="hidden" id="User" name="Username" value="@userName">
                 <button type="submit" class="btn btn-primary btn-custom-outline-orange text-white">Создать заявку</button>
-
-
             </div>
         </div>
     </div>
 
 </form>
+
+
+<script src="~/js/site.js"></script>

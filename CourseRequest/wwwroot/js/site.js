@@ -1,5 +1,5 @@
-﻿<script>
-    $(document).ready(function() {
+﻿
+$(document).ready(function () {
     var currentDate = new Date();
     var day = currentDate.getDate();
     var month = currentDate.getMonth() + 1; // Месяцы в JavaScript начинаются с 0
@@ -13,8 +13,14 @@
         month = '0' + month;
     }
 
-    var formattedDate = year + '-' + month + '-' + day;
-    $('#startDate').val(formattedDate);
-  });
-</script>
+    var formattedDate = day + '.' + month + '.' + year;
+    $('#CourseBeginning').val(formattedDate);
+});
 
+
+
+$(document).ready(function () {
+    var currentDate = new Date();
+    var year = currentDate.getFullYear();
+    $('#Year').val(year);
+});
