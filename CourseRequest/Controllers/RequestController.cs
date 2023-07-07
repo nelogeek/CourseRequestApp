@@ -58,7 +58,7 @@ namespace CourseRequest.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                string query = "SELECT * FROM Requests";
+                string query = "SELECT * FROM Requests ORDER BY id DESC";
                 SqlCommand command = new SqlCommand(query, connection);
                 SqlDataReader reader = command.ExecuteReader();
 
@@ -168,6 +168,56 @@ namespace CourseRequest.Controllers
             }
         }
 
+        //TODO Доделать фильтр по году. Надо попробовать сделать группу фильтров, чтобы они работали в связке
+        [HttpGet]
+        public IActionResult FilteredRequests(int year)
+        {
+            List<RequestOut> filteredRequests = GetFilteredRequestsFromDB(year);
+            return PartialView("_RequestTable", filteredRequests);
+        }
+
+        private List<RequestOut> GetFilteredRequestsFromDB(int year)
+        {
+            List<RequestOut> filteredRequests = new List<RequestOut>();
+
+            string connectionString = _configuration.GetConnectionString("connectionString");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM Requests WHERE YEAR(course_start) = @Year ORDER BY id DESC";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Year", year);
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    RequestOut request = new RequestOut
+                    {
+                        Id = (int)reader["id"],
+                        FullName = (string)reader["full_name"],
+                        Department = (string)reader["department"],
+                        Position = (string)reader["position"],
+                        CourseName = (string)reader["course_name"],
+                        CourseType = GetCourseTypeName((int)reader["course_type"]),
+                        Notation = (string)reader["notation"],
+                        Status = GetStatusName((int)reader["status"]),
+                        CourseStart = (DateTime)reader["course_start"],
+                        CourseEnd = (DateTime)reader["course_end"],
+                        Year = (int)reader["year"],
+                        Username = (string)reader["user"]
+                    };
+
+                    filteredRequests.Add(request);
+                }
+
+                reader.Close();
+            }
+
+            return filteredRequests;
+        }
 
 
 

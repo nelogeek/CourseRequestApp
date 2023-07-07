@@ -8,9 +8,13 @@
     string userName = currentIdentity?.Name ?? "Неизвестно";
 }
 
-@model List<Request>
+@model List<RequestOut>
 
-
+@{
+    int currentYear = DateTime.Now.Year;
+    int endYear = currentYear - 4;
+    int startYear = currentYear;
+}
 
 <div class="container-fluid">
     <div class="row mt-3">
@@ -27,39 +31,47 @@
         </div>
     </div>
 
-    
+    <hr />
+    <div class="row mt-3">
+        <div class="col-md-4">
+
+            <a>ФИЛЬТРЫ</a>
+        </div>
+        <div class="col-md-4">
+            <select class="form-control" id="yearSelect" name="Year">
+                @for (int year = startYear; year >= endYear; year--)
+                {
+                    <option value="@year">@year год</option>
+                }
+                <option value="0">Весь период</option>
+            </select>
+        </div>
+    </div>
 
     <div class="row mb-4 mt-2">
         <div class="col text-center">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Full Name</th>
-                        <th>Department</th>
-                        <th>Position</th>
-                        <th>Course Name</th>
-                        <th>Course Type</th>
-                        <th>Notation</th>
-                        <th>Status</th>
-                        <th>Course Beginning</th>
-                        <th>Course End</th>
-                        <th>Year</th>
+                        <th>Номер заявки</th>
+                        <th>Статус</th>
+                        <th>Отдел</th>
+                        <th>Дата обучения</th>
+                        <th>ФИО обучаемого</th>
+                        <th>Примечание</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="requestTableBody">
                     @foreach (var request in Model)
                     {
                         <tr>
-                            <td>@request.FullName</td>
-                            <td>@request.Department</td>
-                            <td>@request.Position</td>
-                            <td>@request.CourseName</td>
-                            <td>@request.CourseType</td>
-                            <td>@request.Notation</td>
+                            <td>@request.Id</td>
                             <td>@request.Status</td>
-                            <td>@request.CourseBeginning.ToString("dd.MM.yyyy")</td>
-                            <td>@request.CourseEnd.ToString("dd.MM.yyyy")</td>
-                            <td>@request.Year</td>
+                            <td>@request.Department</td>
+                            <td>@request.CourseStart.ToString("dd.MM.yyyy") - @request.CourseEnd.ToString("dd.MM.yyyy")</td>
+                            <td>@request.FullName</td>
+                            <td style="max-width: 180px; word-break: break-word;">@request.Notation</td>
+                            <td>Содержание</td>
                         </tr>
                     }
                 </tbody>

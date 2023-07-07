@@ -1,4 +1,4 @@
-﻿
+﻿/*Вывод текущей даты*/
 $(document).ready(function () {
     var currentDate = new Date();
     var day = currentDate.getDate();
@@ -18,9 +18,28 @@ $(document).ready(function () {
 });
 
 
-
+/*Вывод текущего года*/
 $(document).ready(function () {
     var currentDate = new Date();
     var year = currentDate.getFullYear();
     $('#Year').val(year);
+});
+
+/*фильтр по дате*/
+$(document).ready(function () {
+    $('#yearSelect').change(function () {
+        var selectedYear = $(this).val();
+        var url = "/Home/FilteredRequests?year=" + selectedYear;
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                $('#requestTableBody').html(data);
+            },
+            error: function () {
+                alert("Произошла ошибка при обновлении таблицы.");
+            }
+        });
+    });
 });
