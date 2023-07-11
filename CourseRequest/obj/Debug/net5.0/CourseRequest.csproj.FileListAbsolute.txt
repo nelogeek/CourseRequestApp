@@ -49,3 +49,4 @@ C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\refint\Cours
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\CourseRequest.pdb
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\CourseRequest.genruntimeconfig.cache
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\ref\CourseRequest.dll
+C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\Razor\Views\Request\_RequestTable.cshtml.g.cs

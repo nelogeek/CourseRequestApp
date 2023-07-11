@@ -10,7 +10,7 @@ public class Request
     public int CourseTypeId { get; set; } // Добавлено новое свойство
     public string Notation { get; set; }
     public int StatusId { get; set; } // Добавлено новое свойство
-    public DateTime CourseStart { get; set; } // Обновлено название свойства
+    public DateTime CourseBeginning { get; set; } // Обновлено название свойства
     public DateTime CourseEnd { get; set; }
     public int Year { get; set; }
     public string Username { get; set; }

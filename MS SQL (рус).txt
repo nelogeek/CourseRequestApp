@@ -8,7 +8,7 @@ CREATE TABLE Roles (
 );
 
 INSERT INTO Roles (RoleName)
-VALUES ('Trainee'), ('Initiator'), ('Coordinator');
+VALUES ('Обучаемый'), ('Инициатор'), ('Координатор');
 
 CREATE TABLE Users (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -23,9 +23,9 @@ CREATE TABLE Type (
 );
 
 INSERT INTO Type (type) VALUES
-    ('basic'),
-    ('advanced'),
-    ('for administrators');
+    ('Базовый'),
+    ('Продвинутый'),
+    ('Для администраторов');
 
 
 CREATE TABLE Status (
@@ -34,7 +34,7 @@ CREATE TABLE Status (
 );
 
 INSERT INTO Status (status)
-VALUES ('submitted for training'), ('course completed');
+VALUES ('Заявлен на обучение'), ('Курс пройден'), ('Курс не пройден'), ('В работе'), ('Новая');
 
 
 CREATE TABLE Requests (

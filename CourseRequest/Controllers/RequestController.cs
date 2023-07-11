@@ -18,9 +18,11 @@ namespace CourseRequest.Controllers
         {
             _configuration = configuration;
         }
+
         public IActionResult RequestList()
         {
-            List<RequestOut> requests = GetRequestsFromDB();
+            /*List<RequestOut> requests = GetRequestsFromDB();*/
+            List<RequestOut> requests = GetFilteredRequestsFromDB(GetCurrentUser());
             return View("~/Views/Home/RequestList.cshtml", requests);
         }
 
@@ -31,7 +33,7 @@ namespace CourseRequest.Controllers
             return userName;
         }
 
-        private int GetRequestCountByUser(string userName)
+        /*private int GetRequestCountByUser(string userName)
         {
             string connectionString = _configuration.GetConnectionString("connectionString");
             int requestCount = 0;
@@ -46,9 +48,9 @@ namespace CourseRequest.Controllers
             }
 
             return requestCount;
-        }
+        }*/
 
-       
+
         private List<RequestOut> GetRequestsFromDB()
         {
             List<RequestOut> requests = new List<RequestOut>();
@@ -71,9 +73,9 @@ namespace CourseRequest.Controllers
                         Department = (string)reader["department"],
                         Position = (string)reader["position"],
                         CourseName = (string)reader["course_name"],
-                        CourseType = GetCourseTypeName( (int)reader["course_type"]), 
-                        Notation = (string)reader["notation"],
-                        Status = GetStatusName( (int)reader["status"]),
+                        CourseType = GetCourseTypeName((int)reader["course_type"]),
+                        Notation = reader["notation"].ToString(),
+                        Status = GetStatusName((int)reader["status"]),
                         CourseStart = (DateTime)reader["course_start"],
                         CourseEnd = (DateTime)reader["course_end"],
                         Year = (int)reader["year"],
@@ -123,6 +125,8 @@ namespace CourseRequest.Controllers
         [HttpPost]
         public IActionResult CreateRequest(Request request)
         {
+
+
             if (ModelState.IsValid)
             {
                 string connectionString = _configuration.GetConnectionString("connectionString");
@@ -136,10 +140,10 @@ namespace CourseRequest.Controllers
                     command.Parameters.AddWithValue("@Department", request.Department);
                     command.Parameters.AddWithValue("@Position", request.Position);
                     command.Parameters.AddWithValue("@CourseName", request.CourseName);
-                    command.Parameters.AddWithValue("@CourseTypeId", request.CourseTypeId); // Используем новое свойство CourseTypeId
-                    command.Parameters.AddWithValue("@Notation", request.Notation);
-                    command.Parameters.AddWithValue("@StatusId", request.StatusId); // Используем новое свойство StatusId
-                    command.Parameters.AddWithValue("@CourseStart", request.CourseStart.ToString("yyyy-MM-dd"));
+                    command.Parameters.AddWithValue("@CourseTypeId", request.CourseTypeId); 
+                    command.Parameters.AddWithValue("@Notation", (object)request.Notation ?? DBNull.Value); // Используем DBNull.Value для передачи NULL значения, если примечание не заполнено
+                    command.Parameters.AddWithValue("@StatusId", request.StatusId); 
+                    command.Parameters.AddWithValue("@CourseStart", request.CourseBeginning.ToString("yyyy-MM-dd"));
                     command.Parameters.AddWithValue("@CourseEnd", request.CourseEnd.ToString("yyyy-MM-dd"));
                     command.Parameters.AddWithValue("@Year", request.Year);
                     command.Parameters.AddWithValue("@User", request.Username);
@@ -168,15 +172,18 @@ namespace CourseRequest.Controllers
             }
         }
 
-        //TODO Доделать фильтр по году. Надо попробовать сделать группу фильтров, чтобы они работали в связке
-        [HttpGet]
-        public IActionResult FilteredRequests(int year)
+        
+
+
+        [HttpPost]
+        public IActionResult FilteredRequests(int year, string status, string department, string courseBegin, string courseEnd, string fullName, string requestNumber)
         {
-            List<RequestOut> filteredRequests = GetFilteredRequestsFromDB(year);
+            List<RequestOut> filteredRequests = GetFilteredRequestsFromDB(GetCurrentUser() ,year, status, department, courseBegin, courseEnd, fullName, requestNumber);
             return PartialView("_RequestTable", filteredRequests);
         }
 
-        private List<RequestOut> GetFilteredRequestsFromDB(int year)
+
+        private List<RequestOut> GetFilteredRequestsFromDB(string userName, int year = 0, string status = "", string department = "", string courseBegin = "", string courseEnd = "", string fullName = "", string requestNumber = "")
         {
             List<RequestOut> filteredRequests = new List<RequestOut>();
 
@@ -186,9 +193,50 @@ namespace CourseRequest.Controllers
             {
                 connection.Open();
 
-                string query = "SELECT * FROM Requests WHERE YEAR(course_start) = @Year ORDER BY id DESC";
+                string query = "SELECT * FROM Requests WHERE [user] = @userName"; // Базовый SQL-запрос
+
                 SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Year", year);
+                command.Parameters.AddWithValue("@userName", userName);
+
+                // Добавляем условия фильтрации на основе переданных значений
+                if (year != 0)
+                {
+                    query += " AND (YEAR(course_start) = @Year OR YEAR(course_end) = @Year)";
+                    command.Parameters.AddWithValue("@Year", year);
+                }
+                if (!string.IsNullOrEmpty(status))
+                {
+                    query += " AND status = @Status";
+                    command.Parameters.AddWithValue("@Status", status);
+                }
+                if (!string.IsNullOrEmpty(department))
+                {
+                    query += " AND department LIKE @Department";
+                    command.Parameters.AddWithValue("@Department", department);
+                }
+                if (!string.IsNullOrEmpty(courseBegin) && DateTime.TryParse(courseBegin, out DateTime startDate))
+                {
+                    query += " AND course_start >= @CourseBegin";
+                    command.Parameters.AddWithValue("@CourseBegin", startDate);
+                }
+                if (!string.IsNullOrEmpty(courseEnd) && DateTime.TryParse(courseEnd, out DateTime endDate))
+                {
+                    query += " AND course_end <= @CourseEnd";
+                    command.Parameters.AddWithValue("@CourseEnd", endDate);
+                }
+                if (!string.IsNullOrEmpty(fullName))
+                {
+                    query += " AND full_name LIKE @FullName";
+                    command.Parameters.AddWithValue("@FullName", "%" + fullName + "%");
+                }
+                if (!string.IsNullOrEmpty(requestNumber))
+                {
+                    query += " AND id = @RequestNumber";
+                    command.Parameters.AddWithValue("@RequestNumber", requestNumber);
+                }
+
+                query += " ORDER BY id DESC";
+                command.CommandText = query;
 
                 SqlDataReader reader = command.ExecuteReader();
 
@@ -202,7 +250,7 @@ namespace CourseRequest.Controllers
                         Position = (string)reader["position"],
                         CourseName = (string)reader["course_name"],
                         CourseType = GetCourseTypeName((int)reader["course_type"]),
-                        Notation = (string)reader["notation"],
+                        Notation = reader["notation"].ToString(),
                         Status = GetStatusName((int)reader["status"]),
                         CourseStart = (DateTime)reader["course_start"],
                         CourseEnd = (DateTime)reader["course_end"],
@@ -218,9 +266,6 @@ namespace CourseRequest.Controllers
 
             return filteredRequests;
         }
-
-
-
 
 
     }

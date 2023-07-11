@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="col-auto text-center">
-                <a class="btn btn-primary" asp-area="" asp-controller="Request" asp-action="RequestList">Перейти к списку</a>
+                <a class="btn btn-info" asp-area="" asp-controller="Request" asp-action="RequestList">Перейти к списку</a>
             </div>
         </div>
 
@@ -30,11 +30,11 @@
         <div class="row mb-4 mt-2">
             <div class="col-md-4">
                 <label for="FullName">ФИО</label>
-                <input type="text" class="form-control" id="FullName" name="FullName" placeholder="Введите значение">
+                <input type="text" class="form-control" id="FullName" name="FullName" placeholder="Введите значение" required />
             </div>
             <div class="col-md-4">
                 <label for="CourseName">Наименование курса</label>
-                <textarea class="form-control" id="CourseName" name="CourseName" rows="1" placeholder="Введите текст"></textarea>
+                <textarea class="form-control" id="CourseName" name="CourseName" rows="1" placeholder="Введите текст" required></textarea>
             </div>
             <div class="col-md-4">
                 <label for="Status">Статус</label>
@@ -47,7 +47,7 @@
         <div class="row mb-4">
             <div class="col-md-4">
                 <label for="Department">Отдел</label>
-                <input type="text" class="form-control" id="Department" name="Department" placeholder="Введите значение">
+                <input type="text" class="form-control" id="Department" name="Department" placeholder="Введите значение" required />
             </div>
             <div class="col-md-4">
                 <label for="CourseType">Тип курса</label>
@@ -61,23 +61,29 @@
                 <label for="CourseBeginning">Период проведения курса</label>
                 <div class="row">
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="CourseBeginning" name="CourseBeginning" placeholder="от" />
+                        <input type="text" class="form-control" id="CourseBeginning" name="CourseBeginning" placeholder="от" required />
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="CourseEnd" name="CourseEnd" placeholder="до">
+                        <input type="text" class="form-control" id="CourseEnd" name="CourseEnd" placeholder="до" required />
                     </div>
                 </div>
             </div>
         </div>
         <div class="row mb-4">
+           
             <div class="col-md-4">
                 <label for="Position">Должность</label>
-                <input type="text" class="form-control" id="Position" name="Position" placeholder="Введите значение">
+                <input type="text" class="form-control" id="Position" name="Position" placeholder="Введите значение" required/>
             </div>
             <div class="col-md-4">
                 <label for="Notation">Примечание</label>
                 <textarea class="form-control" id="Notation" name="Notation" rows="1" placeholder="Введите текст"></textarea>
             </div>
+            <div class="col-md-4">
+                <label for="Notation">Год</label>
+                <input type="text" class="form-control" id="Year" name="Year" placeholder="Введите значение" required />
+            </div>
+
             
         </div>
         <div class="row">
@@ -89,7 +95,6 @@
       
             <div class="col text-center">
                 <input type="hidden" id="User" name="Username" value="@userName">
-                <input type="hidden" id="Year" name="Year">
                 <button type="submit" class="btn btn-primary btn-custom-outline-orange text-white">Создать заявку</button>
             </div>
         </div>

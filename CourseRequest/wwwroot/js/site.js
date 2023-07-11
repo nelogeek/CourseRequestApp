@@ -25,20 +25,62 @@ $(document).ready(function () {
     $('#Year').val(year);
 });
 
-/*фильтр по дате*/
-$(document).ready(function () {
-    $('#yearSelect').change(function () {
-        var selectedYear = $(this).val();
-        var url = "/Home/FilteredRequests?year=" + selectedYear;
 
+/*фильтр по дате*/
+/*$(function () {
+    $('#yearSelect').change(function () {
+        var year = $(this).val();
+
+        // Отправка запроса на сервер
+        $.get('/Request/FilteredRequests', { year: year }, function (data) {
+            $('#requestTableBody').html(data);
+        });
+    });
+});*/
+
+
+//$(document).ready(function () {
+//    $('#yearSelect').change(function () {
+//        var year = $(this).val();
+//        var userName = 'Ads'/*$('#userName').data('username')*/; // Получаем имя пользователя из data атрибута
+//        $.ajax({
+//            url: '/Request/FilteredRequests',
+//            type: 'POST',
+//            data: { year: year, userName: userName }, // Передаем выбранный год и имя пользователя
+//            success: function (data) {
+//                $('#requestTableBody').html(data);
+//            }
+//        });
+//    });
+//});
+
+$(document).ready(function () {
+    // Обработчик клика по кнопке "Применить фильтры"
+    $('#applyFiltersBtn').click(function () {
+        // Собираем значения фильтров
+        var year = $('#yearSelect').val();
+        var status = $('#Stat').val();
+        var department = $('#Dep').val();
+        var courseBegin = $('#CourseBegin').val();
+        var courseEnd = $('#CourseEnd').val();
+        var fullName = $('#FullName').val();
+        var requestNumber = $('#RequestNumber').val();
+
+        // Отправляем значения фильтров на сервер
         $.ajax({
-            type: "GET",
-            url: url,
+            url: '/Request/FilteredRequests',
+            type: 'POST',
+            data: {
+                year: year,
+                status: status,
+                department: department,
+                courseBegin: courseBegin,
+                courseEnd: courseEnd,
+                fullName: fullName,
+                requestNumber: requestNumber
+            },
             success: function (data) {
                 $('#requestTableBody').html(data);
-            },
-            error: function () {
-                alert("Произошла ошибка при обновлении таблицы.");
             }
         });
     });
