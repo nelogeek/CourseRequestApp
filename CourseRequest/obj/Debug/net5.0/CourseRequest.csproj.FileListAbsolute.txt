@@ -33,7 +33,6 @@ C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\CourseReques
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\CourseRequest.TagHelpers.output.cache
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\CourseRequest.RazorCoreGenerate.cache
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\Razor\Views\Home\Index.cshtml.g.cs
-C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\Razor\Views\Home\Privacy.cshtml.g.cs
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\Razor\Views\Home\RequestList.cshtml.g.cs
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\Razor\Views\Shared\Error.cshtml.g.cs
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\Razor\Views\Shared\_Layout.cshtml.g.cs
@@ -50,3 +49,4 @@ C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\CourseReques
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\CourseRequest.genruntimeconfig.cache
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\ref\CourseRequest.dll
 C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\Razor\Views\Request\_RequestTable.cshtml.g.cs
+C:\Users\lokot\Desktop\CourseRequest\CourseRequest\obj\Debug\net5.0\Razor\Views\Detail\Details.cshtml.g.cs

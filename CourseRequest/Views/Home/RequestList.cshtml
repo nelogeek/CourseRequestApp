@@ -16,6 +16,29 @@
     int startYear = currentYear;
 }
 
+<!-- DatePicker -->
+<script type="text/javascript" src='~/lib/jquery/dist/jquery.min.js'></script>
+<script type="text/javascript" src='~/lib/twitter-bootstrap/3.0.3/js/bootstrap.min.js'></script>
+<link rel="stylesheet" href='~/lib/twitter-bootstrap/3.0.3/css/bootstrap.min.css' media="screen" />
+<link rel="stylesheet" href="~/lib/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" type="text/css" />
+@section scripts{
+    <script src="~/lib/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js" type="text/javascript"></script>
+    <script src="~/lib/bootstrap-datepicker/1.6.4/locales/bootstrap-datepicker.ru.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#CourseBegin, #CourseEnd').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                todayHighlight: true,
+                format: "dd.mm.yyyy",
+                language: "ru"
+            });
+        });
+    </script>
+    
+}
+<!--------------->
+
 <div class="container-fluid">
     <div class="row mt-3">
         <div class="col">
@@ -89,30 +112,33 @@
     </div>
     @*конец фильтров*@
 
+    <hr class="custom-hr"/>
+
     <div class="row mb-4 mt-2">
         <div class="col text-center">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Номер заявки</th>
-                        <th>Статус</th>
-                        <th>Отдел</th>
-                        <th>Дата обучения</th>
-                        <th>ФИО обучаемого</th>
-                        <th>Примечание</th>
+                        <th class="text-center">Номер заявки</th>
+                        <th class="text-center">Статус</th>
+                        <th class="text-center">Отдел</th>
+                        <th class="text-center">Дата обучения</th>
+                        <th class="text-center">ФИО обучаемого</th>
+                        <th class="text-center">Примечание</th>
+                        <th class="text-center"></th>
                     </tr>
                 </thead>
                 <tbody id="requestTableBody">
                     @foreach (var request in Model)
                     {
                         <tr>
-                            <td>@request.Id</td>
-                            <td>@request.Status</td>
-                            <td>@request.Department</td>
-                            <td>@request.CourseStart.ToString("dd.MM.yyyy") - @request.CourseEnd.ToString("dd.MM.yyyy")</td>
-                            <td>@request.FullName</td>
-                            <td style="max-width: 180px; word-break: break-word;">@request.Notation</td>
-                            <td>Содержание</td>
+                            <td class="text-center">@request.Id</td>
+                            <td class="text-center">@request.Status</td>
+                            <td class="text-center">@request.Department</td>
+                            <td class="text-center">@request.CourseStart.ToString("dd.MM.yyyy") - @request.CourseEnd.ToString("dd.MM.yyyy")</td>
+                            <td class="text-center">@request.FullName</td>
+                            <td class="text-center" style="max-width: 180px; word-break: break-word;">@request.Notation</td>
+                            <td class="text-center"><a href="/Detail/Details/@request.Id">Содержание</a></td>
                         </tr>
                     }
                 </tbody>

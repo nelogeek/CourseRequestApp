@@ -1,90 +1,49 @@
-﻿using CourseRequest.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Principal;
-using System.Threading.Tasks;
+using System;
+using Microsoft.Extensions.Configuration;
 
 namespace CourseRequest.Controllers
 {
-    public class HomeController : Controller
+    public class DetailController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public DetailController(IConfiguration configuration)
         {
-            _logger = logger;
             _configuration = configuration;
         }
-
-        public IActionResult Index()
+        public IActionResult Details(int id)
         {
-            WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
-            string userName = currentIdentity?.Name ?? "Неизвестно";
+            // Получите данные выбранной строки по идентификатору
+            var request = GetRequestOutById(id);
 
-            int requestCount = GetRequestCountForUser(userName);
-            ViewData["RequestCount"] = requestCount;
-
-            List<RequestOut> requests = GetRequestsByStatusAndUserName(1, userName);
-
-            if (requests.Count == 0)
+            if (request == null)
             {
-                return View();
+                // Обработка случая, когда данные не найдены
+                return NotFound();
             }
 
-            return View(requests);
+            // Передайте данные в представление
+            return View(request);
         }
 
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        
-
-        private int GetRequestCountForUser(string username)
+        private RequestOut GetRequestOutById(int id)
         {
             string connectionString = _configuration.GetConnectionString("connectionString");
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string countQuery = "SELECT COUNT(*) FROM Requests WHERE [user] = @User";
-                SqlCommand countCommand = new SqlCommand(countQuery, connection);
-                countCommand.Parameters.AddWithValue("@User", username);
-                int requestCount = (int)countCommand.ExecuteScalar();
-                connection.Close();
-
-                return requestCount;
-            }
-        }
-
-
-        private List<RequestOut> GetRequestsByStatusAndUserName(int status, string userName)
-        {
-            string connectionString = _configuration.GetConnectionString("connectionString");
-
-            List<RequestOut> requests = new List<RequestOut>();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                string query = "SELECT Id, Status, Department, Course_Start, Course_End, Full_Name, Notation FROM Requests WHERE Status = @Status AND [user] = @UserName  ORDER BY id DESC";
+                string query = "SELECT Id, Status, Department, Course_Start, Course_End, Full_Name, Notation FROM Requests WHERE Id = @Id";
                 SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Status", status);
-                command.Parameters.AddWithValue("@UserName", userName);
+                command.Parameters.AddWithValue("@Id", id);
 
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    while (reader.Read())
+                    if (reader.Read())
                     {
                         RequestOut request = new RequestOut();
                         request.Id = Convert.ToInt32(reader["Id"]);
@@ -95,12 +54,12 @@ namespace CourseRequest.Controllers
                         request.FullName = reader["Full_Name"].ToString();
                         request.Notation = reader["Notation"].ToString();
 
-                        requests.Add(request);
+                        return request;
                     }
                 }
             }
 
-            return requests;
+            return null;
         }
 
         private string GetCourseTypeName(int typeId)
@@ -132,6 +91,5 @@ namespace CourseRequest.Controllers
                 return statusName;
             }
         }
-
     }
 }

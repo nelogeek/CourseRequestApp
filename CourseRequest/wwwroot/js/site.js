@@ -1,4 +1,4 @@
-﻿/*Вывод текущей даты*/
+﻿//Вывод текущей даты
 $(document).ready(function () {
     var currentDate = new Date();
     var day = currentDate.getDate();
@@ -18,7 +18,7 @@ $(document).ready(function () {
 });
 
 
-/*Вывод текущего года*/
+//Вывод текущего года
 $(document).ready(function () {
     var currentDate = new Date();
     var year = currentDate.getFullYear();
@@ -26,37 +26,19 @@ $(document).ready(function () {
 });
 
 
-/*фильтр по дате*/
-/*$(function () {
-    $('#yearSelect').change(function () {
-        var year = $(this).val();
-
-        // Отправка запроса на сервер
-        $.get('/Request/FilteredRequests', { year: year }, function (data) {
-            $('#requestTableBody').html(data);
-        });
-    });
-});*/
-
-
-//$(document).ready(function () {
-//    $('#yearSelect').change(function () {
-//        var year = $(this).val();
-//        var userName = 'Ads'/*$('#userName').data('username')*/; // Получаем имя пользователя из data атрибута
-//        $.ajax({
-//            url: '/Request/FilteredRequests',
-//            type: 'POST',
-//            data: { year: year, userName: userName }, // Передаем выбранный год и имя пользователя
-//            success: function (data) {
-//                $('#requestTableBody').html(data);
-//            }
-//        });
-//    });
-//});
-
+//фильтры
 $(document).ready(function () {
     // Обработчик клика по кнопке "Применить фильтры"
-    $('#applyFiltersBtn').click(function () {
+    $('#applyFiltersBtn').click(applyFilters);
+
+    // Обработчик нажатия клавиши Enter в полях фильтрации
+    $('#yearSelect, #Stat, #Dep, #CourseBegin, #CourseEnd, #FullName, #RequestNumber').keypress(function (event) {
+        if (event.which === 13) {
+            applyFilters();
+        }
+    });
+
+    function applyFilters() {
         // Собираем значения фильтров
         var year = $('#yearSelect').val();
         var status = $('#Stat').val();
@@ -83,5 +65,7 @@ $(document).ready(function () {
                 $('#requestTableBody').html(data);
             }
         });
-    });
+    }
 });
+
+

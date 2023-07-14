@@ -73,3 +73,12 @@ body {
 
 /*-------------------------------------------------- */
 
+
+.datepicker {
+    padding: 6px 12px !important;
+    margin-top: 16px !important;
+}
+
+.custom-hr {
+    border-top: 1px solid #bebebe;
+}

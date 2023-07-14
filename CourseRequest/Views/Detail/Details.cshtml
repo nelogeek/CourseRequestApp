@@ -1,0 +1,11 @@
+﻿@model RequestOut
+
+<div>
+    <h3>Детали заявки</h3>
+    <p>Идентификатор: @Model.Id</p>
+    <p>Статус: @Model.Status</p>
+    <p>Отдел: @Model.Department</p>
+    <p>Дата обучения: @Model.CourseStart.ToString("dd.MM.yyyy") - @Model.CourseEnd.ToString("dd.MM.yyyy")</p>
+    <p>ФИО обучаемого: @Model.FullName</p>
+    <p>Примечание: @Model.Notation</p>
+</div>
