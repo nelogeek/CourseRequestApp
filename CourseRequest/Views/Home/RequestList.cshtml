@@ -35,7 +35,7 @@
             });
         });
     </script>
-    
+
 }
 <!--------------->
 
@@ -112,7 +112,7 @@
     </div>
     @*конец фильтров*@
 
-    <hr class="custom-hr"/>
+    <hr class="custom-hr" />
 
     <div class="row mb-4 mt-2">
         <div class="col text-center">
@@ -128,20 +128,23 @@
                         <th class="text-center"></th>
                     </tr>
                 </thead>
-                <tbody id="requestTableBody">
-                    @foreach (var request in Model)
-                    {
-                        <tr>
-                            <td class="text-center">@request.Id</td>
-                            <td class="text-center">@request.Status</td>
-                            <td class="text-center">@request.Department</td>
-                            <td class="text-center">@request.CourseStart.ToString("dd.MM.yyyy") - @request.CourseEnd.ToString("dd.MM.yyyy")</td>
-                            <td class="text-center">@request.FullName</td>
-                            <td class="text-center" style="max-width: 180px; word-break: break-word;">@request.Notation</td>
-                            <td class="text-center"><a href="/Detail/Details/@request.Id">Содержание</a></td>
-                        </tr>
-                    }
-                </tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    <tbody id="requestTableBody">
+                        @foreach (var request in Model)
+                        {
+                            <tr>
+                                <td class="text-center">@request.Id</td>
+                                <td class="text-center">@request.Status</td>
+                                <td class="text-center">@request.Department</td>
+                                <td class="text-center">@request.CourseStart.ToString("dd.MM.yyyy") - @request.CourseEnd.ToString("dd.MM.yyyy")</td>
+                                <td class="text-center">@request.FullName</td>
+                                <td class="text-center" style="max-width: 180px; word-break: break-word;">@request.Notation</td>
+                                <td class="text-center"><a href="/Detail/Details/@request.Id">Содержание</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                }
             </table>
         </div>
     </div>
