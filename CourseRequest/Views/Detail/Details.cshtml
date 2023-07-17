@@ -1,11 +1,56 @@
-﻿@model RequestOut
+﻿@{
+    ViewData["Title"] = "Содержание заявки";
+}
 
-<div>
-    <h3>Детали заявки</h3>
-    <p>Идентификатор: @Model.Id</p>
-    <p>Статус: @Model.Status</p>
-    <p>Отдел: @Model.Department</p>
-    <p>Дата обучения: @Model.CourseStart.ToString("dd.MM.yyyy") - @Model.CourseEnd.ToString("dd.MM.yyyy")</p>
-    <p>ФИО обучаемого: @Model.FullName</p>
-    <p>Примечание: @Model.Notation</p>
+@using System.Security.Principal
+@{
+    WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
+    string userName = currentIdentity?.Name ?? "Неизвестно";
+}
+
+@model RequestOut
+
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col">
+            <div>
+                <b>Содержание заявки</b>
+            </div>
+            <div>
+                <span class="user">Пользователь: @userName</span>
+                <div id="userName" data-username="@userName"></div>
+            </div>
+        </div>
+        <div class="col-auto text-center">
+            <a class="btn btn-info" asp-area="" asp-controller="Home" asp-action="Index">Назад</a>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="col-md-4 mx-auto">
+        <div class="row">
+            <h3>Детали заявки</h3>
+        </div>
+        <div class="row">
+            <p class="text-left">Идентификатор: @Model.Id</p>
+        </div>
+        <div class="row">
+            <p class="text-left">Статус: @Model.Status</p>
+        </div>
+        <div class="row">
+            <p class="text-left">Отдел: @Model.Department</p>
+        </div>
+        <div class="row">
+            <p class="text-left">Дата обучения: @Model.CourseStart.ToString("dd.MM.yyyy") - @Model.CourseEnd.ToString("dd.MM.yyyy")</p>
+        </div>
+        <div class="row">
+            <p class="text-left">ФИО обучаемого: @Model.FullName</p>
+        </div>
+        <div class="row">
+            <p class="text-left">Примечание: @Model.Notation</p>
+        </div>
+    </div>
+</div>
+
 </div>
