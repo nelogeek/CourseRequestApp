@@ -29,7 +29,7 @@ namespace CourseRequest.Controllers
         }
 
 
-        private RequestOut GetRequestOutById(int id)
+        private Request GetRequestOutById(int id)
         {
             string connectionString = _configuration.GetConnectionString("connectionString");
 
@@ -37,7 +37,7 @@ namespace CourseRequest.Controllers
             {
                 connection.Open();
 
-                string query = "SELECT Id, Status, Department, Course_Start, Course_End, Full_Name, Notation FROM Requests WHERE Id = @Id";
+                string query = "SELECT Id, Status, Department, Course_Start, Course_End, Full_Name, Notation, Position, Course_Name, Course_Type, Year FROM Requests WHERE Id = @Id";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@Id", id);
 
@@ -45,14 +45,18 @@ namespace CourseRequest.Controllers
                 {
                     if (reader.Read())
                     {
-                        RequestOut request = new RequestOut();
+                        Request request = new Request();
                         request.Id = Convert.ToInt32(reader["Id"]);
-                        request.Status = GetStatusName((int)reader["Status"]).ToString();
-                        request.Department = reader["Department"].ToString();
-                        request.CourseStart = Convert.ToDateTime(reader["Course_Start"]);
-                        request.CourseEnd = Convert.ToDateTime(reader["Course_End"]);
                         request.FullName = reader["Full_Name"].ToString();
+                        request.Department = reader["Department"].ToString();
+                        request.Position = reader["Position"].ToString();
+                        request.CourseName = reader["Course_Name"].ToString();
+                        request.CourseTypeId = (int)reader["Course_Type"];
                         request.Notation = reader["Notation"].ToString();
+                        request.StatusId = (int)reader["Status"];
+                        request.CourseBeginning = Convert.ToDateTime(reader["Course_Start"]);
+                        request.CourseEnd = Convert.ToDateTime(reader["Course_End"]);
+                        request.Year = (int)reader["Year"];
 
                         return request;
                     }

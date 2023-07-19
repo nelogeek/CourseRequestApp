@@ -67,7 +67,7 @@ namespace CourseRequest.Controllers
         }
 
 
-        private List<RequestOut> GetRequestsByStatusAndUserName(int status, string userName)
+        private List<RequestOut> GetRequestsByStatusAndUserName(int statusId, string userName)
         {
             string connectionString = _configuration.GetConnectionString("connectionString");
 
@@ -77,9 +77,9 @@ namespace CourseRequest.Controllers
             {
                 connection.Open();
 
-                string query = "SELECT Id, Status, Department, Course_Start, Course_End, Full_Name, Notation FROM Requests WHERE Status = @Status AND [user] = @UserName  ORDER BY id DESC";
+                string query = "SELECT Id, Department, Course_Start, Course_End, Full_Name, Notation, Position, Course_Name, Course_Type, Year FROM Requests WHERE Status = @Status AND [user] = @UserName  ORDER BY id DESC";
                 SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Status", status);
+                command.Parameters.AddWithValue("@Status", statusId);
                 command.Parameters.AddWithValue("@UserName", userName);
 
                 using (SqlDataReader reader = command.ExecuteReader())
@@ -87,13 +87,18 @@ namespace CourseRequest.Controllers
                     while (reader.Read())
                     {
                         RequestOut request = new RequestOut();
+                       
                         request.Id = Convert.ToInt32(reader["Id"]);
-                        request.Status = GetStatusName((int)reader["Status"]).ToString();
+                        request.FullName = reader["Full_Name"].ToString();
                         request.Department = reader["Department"].ToString();
+                        request.Position = reader["Position"].ToString();
+                        request.CourseName = reader["Course_Name"].ToString();
+                        request.CourseType = GetCourseTypeName( (int)reader["Course_Type"]);
+                        request.Notation = reader["Notation"].ToString();
+                        request.Status = GetStatusName(statusId);
                         request.CourseStart = Convert.ToDateTime(reader["Course_Start"]);
                         request.CourseEnd = Convert.ToDateTime(reader["Course_End"]);
-                        request.FullName = reader["Full_Name"].ToString();
-                        request.Notation = reader["Notation"].ToString();
+                        request.Year = (int)reader["Year"];
 
                         requests.Add(request);
                     }

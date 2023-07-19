@@ -7,10 +7,10 @@ public class RequestOut
     public string Department { get; set; }
     public string Position { get; set; }
     public string CourseName { get; set; }
-    public string CourseType { get; set; } // Добавлено новое свойство
+    public string CourseType { get; set; } 
     public string Notation { get; set; }
-    public string Status { get; set; } // Добавлено новое свойство
-    public DateTime CourseStart { get; set; } // Обновлено название свойства
+    public string Status { get; set; } 
+    public DateTime CourseStart { get; set; } 
     public DateTime CourseEnd { get; set; }
     public int Year { get; set; }
     public string Username { get; set; }
