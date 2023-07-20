@@ -1,4 +1,5 @@
-﻿using CourseRequest.Models;
+﻿using CourseRequest.Data;
+using CourseRequest.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -16,11 +17,13 @@ namespace CourseRequest.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration, ApplicationDbContext context)
         {
             _logger = logger;
             _configuration = configuration;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -28,6 +31,28 @@ namespace CourseRequest.Controllers
             WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
             string userName = currentIdentity?.Name ?? "Неизвестно";
 
+
+            // Получение ролей пользователя из базы данных
+            var user = _context.Users.FirstOrDefault(u => u.UserName == userName);
+
+            UserRole userRoles = UserRole.None;
+
+            if (user != null)
+            {
+                if (user.RoleId == (int)UserRole.Coordinator)
+                    userRoles |= UserRole.Coordinator;
+
+                if (user.RoleId == (int)UserRole.Initiator)
+                    userRoles |= UserRole.Initiator;
+
+                if (user.RoleId == (int)UserRole.Trainee)
+                    userRoles |= UserRole.Trainee;
+            }
+
+            ViewBag.UserRoles = userRoles;
+
+
+            // Получение таблицы заявок и их количества
             int requestCount = GetRequestCountForUser(userName);
             ViewData["RequestCount"] = requestCount;
 

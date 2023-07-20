@@ -12,8 +12,8 @@ VALUES ('Обучаемый'), ('Инициатор'), ('Координатор'
 
 CREATE TABLE Users (
     Id INT IDENTITY(1,1) PRIMARY KEY,
-    Username NVARCHAR(100) NOT NULL,
-    RoleId INT NOT NULL,
+    Username NVARCHAR(100) ,
+    RoleId INT,
     CONSTRAINT FK_Users_Roles FOREIGN KEY (RoleId) REFERENCES Roles(Id)
 );
 
@@ -52,4 +52,10 @@ CREATE TABLE Requests (
     [user] NVARCHAR(100),
     FOREIGN KEY (course_type) REFERENCES Type(id),
     FOREIGN KEY (status) REFERENCES Status(id)
+);
+
+CREATE TABLE UserRole (
+    [User] INT NOT NULL,
+    RoleId INT NOT NULL,
+    FOREIGN KEY (RoleId) REFERENCES Roles (Id)
 );

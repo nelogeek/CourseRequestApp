@@ -8,6 +8,12 @@
     string userName = currentIdentity?.Name ?? "Неизвестно";
 }
 
+@{
+    
+    var userRole = ViewBag.UserRole;
+}
+
+@using CourseRequest.Models
 @model List<RequestOut>
 
 <!-- DatePicker -->
@@ -156,6 +162,18 @@
             </table>
         </div>
     </div>
+    }
+
+
+    
+
+    @if (ViewBag.UserRoles.HasFlag(UserRole.Coordinator))
+    {
+        <button type="button" class="btn btn-primary">Кнопка доступная только Координаторам</button>
+    }
+    @if (ViewBag.UserRoles.HasFlag(UserRole.Initiator))
+    {
+        <button type="button" class="btn btn-primary">Кнопка доступная только Инициаторам</button>
     }
 </form>
 
