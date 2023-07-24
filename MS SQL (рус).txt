@@ -8,7 +8,7 @@ CREATE TABLE Roles (
 );
 
 INSERT INTO Roles (RoleName)
-VALUES ('Обучаемый'), ('Инициатор'), ('Координатор');
+VALUES ('Инициатор'), ('Координатор');
 
 CREATE TABLE Users (
     Id INT IDENTITY(1,1) PRIMARY KEY,

@@ -6,8 +6,12 @@ namespace CourseRequest.Models
     public enum UserRole
     {
         None = 0,
-        Coordinator = 1,
-        Initiator = 2,
-        Trainee = 4
+        Initiator = 1,
+        Coordinator = 2
+        
+        
+        
+        
+        
     }
 }

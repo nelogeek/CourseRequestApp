@@ -64,8 +64,7 @@ namespace CourseRequest.Controllers
                 if (user.RoleId == (int)UserRole.Initiator)
                     userRole |= UserRole.Initiator;
 
-                if (user.RoleId == (int)UserRole.Trainee)
-                    userRole |= UserRole.Trainee;
+                
             }
 
             return userRole;
