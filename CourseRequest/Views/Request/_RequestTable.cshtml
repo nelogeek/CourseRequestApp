@@ -3,12 +3,12 @@
 @foreach (var request in Model)
 {
     <tr>
-        <td>@request.Id</td>
-        <td>@request.Status</td>
-        <td>@request.Department</td>
-        <td>@request.CourseStart.ToString("dd.MM.yyyy") - @request.CourseEnd.ToString("dd.MM.yyyy")</td>
-        <td>@request.FullName</td>
-        <td style="max-width: 180px; word-break: break-word;">@request.Notation</td>
-        <td>Содержание</td>
+        <td class="text-center">@request.Id</td>
+        <td class="text-center">@request.Status</td>
+        <td class="text-center">@request.FullName</td>
+        <td class="text-center">@request.CourseName</td>
+        <td class="text-center">@request.CourseType</td>
+        <td class="text-center">@request.CourseStart.ToString("dd.MM.yyyy") - @request.CourseEnd.ToString("dd.MM.yyyy")</td>
+        <td class="text-center"><a href="/Detail/Details/@request.Id">Содержание</a></td>
     </tr>
 }

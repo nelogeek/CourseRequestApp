@@ -9,7 +9,7 @@
 }
 
 @{
-    
+
     var userRole = ViewBag.UserRole;
 }
 
@@ -26,7 +26,7 @@
     <script src="~/lib/bootstrap-datepicker/1.6.4/locales/bootstrap-datepicker.ru.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         $(function () {
-            $('#CourseBeginning, #CourseEnd').datepicker({
+            $('#Course_Start, #Course_End').datepicker({
                 changeMonth: true,
                 changeYear: true,
                 todayHighlight: true,
@@ -47,7 +47,7 @@
                 </div>
                 <div>
                     <span class="user">Пользователь: @userName</span>
-                    
+
                 </div>
             </div>
             <div class="col-auto text-center">
@@ -60,17 +60,20 @@
         <div class="row mb-4 mt-2">
             <div class="col-md-4">
                 <label for="FullName">ФИО обучаемого</label>
-                <input type="text" class="form-control" id="FullName" name="FullName" placeholder="Введите значение" required />
+                <input type="text" class="form-control" id="Full_Name" name="Full_Name" placeholder="Введите значение" required />
             </div>
             <div class="col-md-4">
                 <label for="CourseName">Наименование курса</label>
-                <textarea class="form-control" id="CourseName" name="CourseName" rows="1" placeholder="Введите текст" required></textarea>
+                <textarea class="form-control" id="Course_Name" name="Course_Name" rows="1" placeholder="Введите текст" required></textarea>
             </div>
             <div class="col-md-4">
                 <label for="Status">Статус</label>
-                <select class="form-control" id="StatusId" name="StatusId">
-                    <option value="1">Заявлен на обучение</option>
-                    <option value="2">Курс пройден</option>
+                <select class="form-control" id="Status" name="Status">
+                    <option value="1">Новая</option>
+                    <option value="2">В работе</option>
+                    <option value="3">Заявлен на обучение</option>
+                    <option value="4">Курс пройден</option>
+                    <option value="5">Курс не пройден</option>
                 </select>
             </div>
         </div>
@@ -81,26 +84,26 @@
             </div>
             <div class="col-md-4">
                 <label for="CourseType">Тип курса</label>
-                <select class="form-control" id="CourseTypeId" name="CourseTypeId">
+                <select class="form-control" id="Course_Type" name="Course_Type">
                     <option value="1">Базовый</option>
                     <option value="2">Продвинутый</option>
                     <option value="3">Для администраторов</option>
                 </select>
             </div>
             <div class="col-md-4">
-                <label for="CourseBeginning">Период проведения курса</label>
+                <label for="Course_Start">Период проведения курса</label>
                 <div class="row">
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="CourseBeginning" name="CourseBeginning" placeholder="от" required />
+                        <input type="text" class="form-control" id="Course_Start" name="Course_Start" placeholder="от" required />
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="CourseEnd" name="CourseEnd" placeholder="до" required />
+                        <input type="text" class="form-control" id="Course_End" name="Course_End" placeholder="до" required />
                     </div>
                 </div>
             </div>
         </div>
         <div class="row mb-4">
-           
+
             <div class="col-md-4">
                 <label for="Position">Должность</label>
                 <input type="text" class="form-control" id="Position" name="Position" placeholder="Введите значение" required />
@@ -109,10 +112,10 @@
                 <label for="Notation">Примечание</label>
                 <textarea class="form-control" id="Notation" name="Notation" rows="1" placeholder="Введите текст"></textarea>
             </div>
-            <div class="col-md-4">
+            @*<div class="col-md-4">
                 <label for="Year">Год</label>
                 <input type="text" class="form-control" id="Year" name="Year" placeholder="Введите значение" required />
-            </div>
+            </div>*@
         </div>
 
         <div class="row">
@@ -121,9 +124,9 @@
             </div>
         </div>
         <div class="row">
-      
+
             <div class="col text-center">
-                <input type="hidden" id="User" name="Username" value="@userName">
+                <input type="hidden" id="User" name="User" value="@userName">
                 <button type="submit" class="btn btn-primary btn-custom-outline-orange text-white">Создать заявку</button>
             </div>
         </div>
@@ -159,21 +162,18 @@
                             </tr>
                         }
                     </tbody>
-            </table>
+                </table>
+            </div>
         </div>
-    </div>
     }
 
 
-    
 
-    @if (ViewBag.UserRoles.HasFlag(UserRole.Coordinator))
-    {
-        <button type="button" class="btn btn-primary">Кнопка доступная только Координаторам</button>
-    }
+
+    @*
     @if (ViewBag.UserRoles.HasFlag(UserRole.Initiator))
     {
-        <button type="button" class="btn btn-primary">Кнопка доступная только Инициаторам</button>
-    }
+    <button type="button" class="btn btn-primary">Кнопка доступная только Инициаторам</button>
+    }*@
 </form>
 

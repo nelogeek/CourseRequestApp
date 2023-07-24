@@ -2,20 +2,34 @@
 using System.Data.SqlClient;
 using System;
 using Microsoft.Extensions.Configuration;
+using CourseRequest.Models;
+using System.Security.Principal;
+using Microsoft.EntityFrameworkCore;
+using CourseRequest.Data;
+using System.Linq;
 
 namespace CourseRequest.Controllers
 {
     public class DetailController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
-        public DetailController(IConfiguration configuration)
+        public DetailController(IConfiguration configuration, ApplicationDbContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
         public IActionResult Details(int id)
         {
-            // Получите данные выбранной строки по идентификатору
+            string userName = GetCurrentUser();
+
+            UserRole userRole = GetUserRole(userName);
+
+            ViewBag.UserRoles = userRole;
+
+
+            // получение данных выбранной строки по идентификатору
             var request = GetRequestOutById(id);
 
             if (request == null)
@@ -24,8 +38,37 @@ namespace CourseRequest.Controllers
                 return NotFound();
             }
 
-            // Передайте данные в представление
+            // Передача данных в представление
             return View(request);
+        }
+
+        private string GetCurrentUser()
+        {
+            WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
+            string userName = currentIdentity?.Name ?? "Неизвестно";
+            return userName;
+        }
+
+        private UserRole GetUserRole(string userName)
+        {
+            // Получение ролей пользователя из базы данных
+            var user = _context.Users.FirstOrDefault(u => u.UserName == userName);
+
+            UserRole userRole = UserRole.None;
+
+            if (user != null)
+            {
+                if (user.RoleId == (int)UserRole.Coordinator)
+                    userRole |= UserRole.Coordinator;
+
+                if (user.RoleId == (int)UserRole.Initiator)
+                    userRole |= UserRole.Initiator;
+
+                if (user.RoleId == (int)UserRole.Trainee)
+                    userRole |= UserRole.Trainee;
+            }
+
+            return userRole;
         }
 
 
@@ -47,15 +90,15 @@ namespace CourseRequest.Controllers
                     {
                         Request request = new Request();
                         request.Id = Convert.ToInt32(reader["Id"]);
-                        request.FullName = reader["Full_Name"].ToString();
+                        request.Full_Name = reader["Full_Name"].ToString();
                         request.Department = reader["Department"].ToString();
                         request.Position = reader["Position"].ToString();
-                        request.CourseName = reader["Course_Name"].ToString();
-                        request.CourseTypeId = (int)reader["Course_Type"];
+                        request.Course_Name = reader["Course_Name"].ToString();
+                        request.Course_Type = (int)reader["Course_Type"];
                         request.Notation = reader["Notation"].ToString();
-                        request.StatusId = (int)reader["Status"];
-                        request.CourseBeginning = Convert.ToDateTime(reader["Course_Start"]);
-                        request.CourseEnd = Convert.ToDateTime(reader["Course_End"]);
+                        request.Status = (int)reader["Status"];
+                        request.Course_Start = Convert.ToDateTime(reader["Course_Start"]);
+                        request.Course_End = Convert.ToDateTime(reader["Course_End"]);
                         request.Year = (int)reader["Year"];
 
                         return request;
@@ -95,5 +138,38 @@ namespace CourseRequest.Controllers
                 return statusName;
             }
         }
+
+
+        [HttpPost]
+        public IActionResult SaveChanges(int requestId, Request model)
+        {
+            // Временный вывод в консоль для отладки
+            Console.WriteLine("SaveChanges called with requestId: " + requestId);
+            Console.WriteLine("FullName: " + model.Full_Name);
+            // и так далее, выводите остальные свойства модели
+
+            // Находим заявку по её идентификатору (Id)
+            var request = _context.Requests.FirstOrDefault(r => r.Id == requestId);
+
+            if (request != null)
+            {
+                // Обновляем данные заявки из переданной модели
+                request.Full_Name = model.Full_Name;
+                request.Course_Name = model.Course_Name;
+                request.Status = model.Status;
+                request.Department = model.Department;
+                request.Course_Type = model.Course_Type;
+                request.Course_Start = model.Course_Start;
+                request.Course_End = model.Course_End;
+                request.Position = model.Position;
+                request.Notation = model.Notation;
+
+                // Сохранение изменений в бд
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }

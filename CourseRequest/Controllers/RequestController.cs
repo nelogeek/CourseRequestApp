@@ -7,22 +7,33 @@ using CourseRequest.Models;
 using System.Data.SqlClient;
 using System.Security.Principal;
 using Microsoft.AspNetCore.Authorization;
+using CourseRequest.Data;
+using System.Linq;
 
 namespace CourseRequest.Controllers
 {
     public class RequestController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
-        public RequestController(IConfiguration configuration)
+        public RequestController(IConfiguration configuration, ApplicationDbContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
 
         public IActionResult RequestList()
         {
             /*List<RequestOut> requests = GetRequestsFromDB();*/
-            List<RequestOut> requests = GetFilteredRequestsFromDB(GetCurrentUser());
+
+            string userName = GetCurrentUser();
+
+            UserRole userRole = GetUserRole(userName);
+
+            ViewBag.UserRoles = userRole;
+
+            List<RequestOut> requests = GetFilteredRequestsFromDB(userName, userRole);
             return View("~/Views/Home/RequestList.cshtml", requests);
         }
 
@@ -33,7 +44,7 @@ namespace CourseRequest.Controllers
             return userName;
         }
 
-        /*private int GetRequestCountByUser(string userName)
+        private int GetRequestCountByUser(string userName)
         {
             string connectionString = _configuration.GetConnectionString("connectionString");
             int requestCount = 0;
@@ -48,7 +59,7 @@ namespace CourseRequest.Controllers
             }
 
             return requestCount;
-        }*/
+        }
 
 
         private List<RequestOut> GetRequestsFromDB()
@@ -125,45 +136,32 @@ namespace CourseRequest.Controllers
         [HttpPost]
         public IActionResult CreateRequest(Request request)
         {
-
-
-            if (ModelState.IsValid)
+            if (ModelState.IsValid /*&& !string.IsNullOrEmpty(request.Full_Name)*/)
             {
-                string connectionString = _configuration.GetConnectionString("connectionString");
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                // Создаем новый объект Request с переданными данными
+                var newRequest = new Request
                 {
-                    string query = "INSERT INTO Requests (full_name, department, position, course_name, course_type, notation, status, course_start, course_end, year, [user]) " +
-                                   "VALUES (@FullName, @Department, @Position, @CourseName, @CourseTypeId, @Notation, @StatusId, @CourseStart, @CourseEnd, @Year, @User)";
+                    Full_Name = request.Full_Name,
+                    Department = request.Department,
+                    Position = request.Position,
+                    Course_Name = request.Course_Name,
+                    Course_Type = request.Course_Type,
+                    Notation = request.Notation,
+                    Status = request.Status,
+                    Course_Start = request.Course_Start,
+                    Course_End = request.Course_End,
+                    Year = request.Course_Start.Year,
+                    User = request.User
+                };
 
-                    SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@FullName", request.FullName);
-                    command.Parameters.AddWithValue("@Department", request.Department);
-                    command.Parameters.AddWithValue("@Position", request.Position);
-                    command.Parameters.AddWithValue("@CourseName", request.CourseName);
-                    command.Parameters.AddWithValue("@CourseTypeId", request.CourseTypeId); 
-                    command.Parameters.AddWithValue("@Notation", (object)request.Notation ?? DBNull.Value); // Используем DBNull.Value для передачи NULL значения, если примечание не заполнено
-                    command.Parameters.AddWithValue("@StatusId", request.StatusId); 
-                    command.Parameters.AddWithValue("@CourseStart", request.CourseBeginning.ToString("yyyy-MM-dd"));
-                    command.Parameters.AddWithValue("@CourseEnd", request.CourseEnd.ToString("yyyy-MM-dd"));
-                    command.Parameters.AddWithValue("@Year", request.Year);
-                    command.Parameters.AddWithValue("@User", request.Username);
+                // Добавляем новую заявку в контекст базы данных
+                _context.Requests.Add(newRequest);
 
-                    connection.Open();
-                    int rowsAffected = command.ExecuteNonQuery();
-                    connection.Close();
+                // Сохраняем изменения в базе данных
+                _context.SaveChanges();
 
-                    if (rowsAffected > 0)
-                    {
-                        // Успешно сохранено
-                        return RedirectToAction("Index"); // Перенаправление на страницу списка заявок или другую страницу
-                    }
-                    else
-                    {
-                        // Ошибка при сохранении
-                        // Вернуть представление с сообщением об ошибке или выполнить другую логику обработки ошибки
-                        return View("Error");
-                    }
-                }
+                // Успешно сохранено, перенаправляем на страницу списка заявок или другую страницу
+                return RedirectToAction("Index");
             }
             else
             {
@@ -172,18 +170,41 @@ namespace CourseRequest.Controllers
             }
         }
 
-        
+
+        private UserRole GetUserRole(string userName)
+        {
+            // Получение ролей пользователя из базы данных
+            var user = _context.Users.FirstOrDefault(u => u.UserName == userName);
+
+            UserRole userRole = UserRole.None;
+
+            if (user != null)
+            {
+                if (user.RoleId == (int)UserRole.Coordinator)
+                    userRole |= UserRole.Coordinator;
+
+                if (user.RoleId == (int)UserRole.Initiator)
+                    userRole |= UserRole.Initiator;
+
+                if (user.RoleId == (int)UserRole.Trainee)
+                    userRole |= UserRole.Trainee;
+            }
+
+            return userRole;
+        }
 
 
         [HttpPost]
         public IActionResult FilteredRequests(int year, string status, string department, string courseBegin, string courseEnd, string fullName, string requestNumber)
         {
-            List<RequestOut> filteredRequests = GetFilteredRequestsFromDB(GetCurrentUser() ,year, status, department, courseBegin, courseEnd, fullName, requestNumber);
+            string userName = GetCurrentUser();
+            UserRole userRole = GetUserRole(userName);
+            List<RequestOut> filteredRequests = GetFilteredRequestsFromDB(userName, userRole, year, status, department, courseBegin, courseEnd, fullName, requestNumber);
             return PartialView("_RequestTable", filteredRequests);
         }
 
 
-        private List<RequestOut> GetFilteredRequestsFromDB(string userName, int year = 0, string status = "", string department = "", string courseBegin = "", string courseEnd = "", string fullName = "", string requestNumber = "")
+        private List<RequestOut> GetFilteredRequestsFromDB(string userName, UserRole userRole, int year = 0, string status = "", string department = "", string courseBegin = "", string courseEnd = "", string fullName = "", string requestNumber = "")
         {
             List<RequestOut> filteredRequests = new List<RequestOut>();
 
@@ -193,7 +214,7 @@ namespace CourseRequest.Controllers
             {
                 connection.Open();
 
-                string query = "SELECT * FROM Requests WHERE [user] = @userName"; // Базовый SQL-запрос
+                string query = "SELECT * FROM Requests WHERE 1=1"; // Базовый SQL-запрос
 
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@userName", userName);

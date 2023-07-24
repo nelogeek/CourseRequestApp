@@ -14,16 +14,16 @@ $(document).ready(function () {
     }
 
     var formattedDate = day + '.' + month + '.' + year;
-    $('#CourseBeginning').val(formattedDate);
+    $('#Course_Start').val(formattedDate);
 });
 
 
 //Вывод текущего года
-$(document).ready(function () {
-    var currentDate = new Date();
-    var year = currentDate.getFullYear();
-    $('#Year').val(year);
-});
+//$(document).ready(function () {
+//    var currentDate = new Date();
+//    var year = currentDate.getFullYear();
+//    $('#Year').val(year);
+//});
 
 
 //фильтры

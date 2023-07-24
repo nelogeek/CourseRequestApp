@@ -39,6 +39,8 @@
 }
 <!--------------->
 
+
+
 <div class="container-fluid">
     <div class="row mt-3">
         <div class="col">
@@ -50,9 +52,13 @@
                 <div id="userName" data-username="@userName"></div>
             </div>
         </div>
-        <div class="col-auto text-center">
-            <a class="btn btn-info" asp-area="" asp-controller="Home" asp-action="Index">Составить новую заявку</a>
-        </div>
+        @if (ViewBag.UserRoles.HasFlag(UserRole.Initiator))
+        {
+            <div class="col-auto text-center">
+                <a class="btn btn-info" asp-area="" asp-controller="Home" asp-action="Index">Составить новую заявку</a>
+            </div>
+        }
+
     </div>
 
     <hr />
@@ -73,8 +79,11 @@
             <label for="Stat">Статус заявки</label>
             <select class="form-control" id="Stat" name="Stat">
                 <option value=""></option>
-                <option value="1">Заявлен на обучение</option>
-                <option value="2">Курс пройден</option>
+                <option value="1">Новая</option>
+                <option value="2">В работе</option>
+                <option value="3">Заявлен на обучение</option>
+                <option value="4">Курс пройден</option>
+                <option value="5">Курс не пройден</option>
             </select>
         </div>
         <div class="col-md-4">

@@ -34,7 +34,7 @@ CREATE TABLE Status (
 );
 
 INSERT INTO Status (status)
-VALUES ('Заявлен на обучение'), ('Курс пройден'), ('Курс не пройден'), ('В работе'), ('Новая');
+VALUES ('Новая'), ('В работе'), ('Заявлен на обучение'), ('Курс пройден'), ('Курс не пройден') ;
 
 
 CREATE TABLE Requests (
@@ -54,8 +54,10 @@ CREATE TABLE Requests (
     FOREIGN KEY (status) REFERENCES Status(id)
 );
 
-CREATE TABLE UserRole (
-    [User] INT NOT NULL,
-    RoleId INT NOT NULL,
-    FOREIGN KEY (RoleId) REFERENCES Roles (Id)
-);
+--------------------
+
+drop table Requests;
+drop table Status;
+drop table Type;
+drop table Users;
+drop table Roles;
