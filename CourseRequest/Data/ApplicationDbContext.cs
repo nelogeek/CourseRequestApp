@@ -12,6 +12,9 @@ namespace CourseRequest.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<TempUser> TempUser { get; set; }
+        public DbSet<TempDept> TempDept { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

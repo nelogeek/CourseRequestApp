@@ -61,6 +61,10 @@
             <div class="col-md-4">
                 <label for="FullName">ФИО обучаемого</label>
                 <input type="text" class="form-control" id="Full_Name" name="Full_Name" placeholder="Введите значение" required />
+                @*<div id="similarNamesList" class="list-group"></div>*@
+                @*<datalist id="similarNames"></datalist>*@
+                <div id="similarNamesList" class="list-group" style="position: absolute; z-index: 1; display: none; max-height: calc(100vh / 3); overflow-y: auto;  border: 2px solid #e2e2e2;"></div>
+                
             </div>
             <div class="col-md-4">
                 <label for="CourseName">Наименование курса</label>
@@ -68,7 +72,7 @@
             </div>
             <div class="col-md-4">
                 <label for="Status">Статус</label>
-                <select class="form-control" id="Status" name="Status">
+                <select class="form-control" id="Status" name="Status" disabled>
                     <option value="1">Новая</option>
                     <option value="2">В работе</option>
                     <option value="3">Заявлен на обучение</option>
@@ -112,10 +116,7 @@
                 <label for="Notation">Примечание</label>
                 <textarea class="form-control" id="Notation" name="Notation" rows="1" placeholder="Введите текст"></textarea>
             </div>
-            @*<div class="col-md-4">
-                <label for="Year">Год</label>
-                <input type="text" class="form-control" id="Year" name="Year" placeholder="Введите значение" required />
-            </div>*@
+            
         </div>
 
         <div class="row">
@@ -167,13 +168,10 @@
         </div>
     }
 
-
-
-
-    @*
-    @if (ViewBag.UserRoles.HasFlag(UserRole.Initiator))
-    {
-    <button type="button" class="btn btn-primary">Кнопка доступная только Инициаторам</button>
-    }*@
 </form>
+
+
+<script type="text/javascript">
+    
+</script>
 

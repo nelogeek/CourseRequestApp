@@ -277,5 +277,31 @@ namespace CourseRequest.Controllers
             }
         }
 
+
+
+        [HttpGet]
+        public IActionResult GetSimilarNames(string name)
+        {
+            var similarNames = _context.TempUser
+                .Where(u => u.Fio.Contains(name))
+                .Join(
+                    _context.TempDept,
+                    user => user.Dept_Id,
+                    dept => dept.Id,
+                    (user, dept) => new
+                    {
+                        UserName = user.Fio,
+                        Dept_Id = user.Dept_Id,
+                        Position = user.Position,
+
+                        DeptName = dept.Name
+                    })
+                .ToList();
+
+            return Json(similarNames);
+        }
+
+
+
     }
 }
